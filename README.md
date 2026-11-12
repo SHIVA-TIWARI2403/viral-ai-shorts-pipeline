@@ -1,70 +1,76 @@
-# 🚀 Viral AI Shorts & Reels Automation Pipeline
+# Short-Form Video Automation Pipeline
 
-Autonomous AI Pipeline jo **YouTube Shorts**, **Instagram Reels**, aur **Facebook Reels** ke liye automatically viral videos generate aur upload karta hai.
-
----
-
-## 🌟 Features
-- **Niche:** Dark Psychology & Human Behavior Mysteries (English) — currently the highest-earning & most viral short-form niche globally.
-- **AI Script Engine:** 3-second scroll-stopping hooks, high-retention 30-40s psychological scripts.
-- **Deep Neural Voice:** Ultra-realistic baritone voice (`en-US-ChristopherNeural`).
-- **Cinematic Visuals:** 9:16 vertical AI generated images (Pollinations Flux/SDXL with local fallback).
-- **Auto-Editing:** Burned-in, high-contrast kinetic subtitles (yellow/white with bold outlines) + ambient background tension audio.
-- **Direct Uploaders:**
-  - YouTube Data API v3 (Automatic `#Shorts` tagging & OAuth handling).
-  - Meta Graph API (Instagram Reels & Facebook Pages).
+A modular content generation and publishing pipeline for YouTube Shorts and Instagram Reels. Automates script generation, neural text-to-speech rendering, subtitle timing, video compositing, and platform publishing via official APIs.
 
 ---
 
-## 🛠️ Quick Start
+## Architecture
 
-### 1. Ek Test Video Generate Karein (Preview)
-Apne terminal / PowerShell me yeh command chalayein:
-```powershell
-cd "C:\Users\SHIVA TIWARI\.gemini\antigravity\scratch\viral_ai_shorts_pipeline"
+1. **Script Engine:** Generates focused, high-retention 30-40 second narrative scripts structured with early hooks.
+2. **Audio Synthesis:** Uses Microsoft Edge Neural TTS (`edge-tts`) to generate high-fidelity voiceovers without third-party subscriptions.
+3. **Compositing & Subtitles:** Builds 9:16 vertical videos using MoviePy and FFmpeg, applying burnt-in kinetic subtitles with high-contrast outlines and ambient background audio.
+4. **Publishing Integrations:**
+   - **YouTube Data API v3:** Automatic tag attachment, privacy setting, and OAuth token persistence.
+   - **Meta Graph API:** Instagram Reels & Facebook Pages video publishing endpoints.
+
+---
+
+## Project Structure
+
+```text
+viral_ai_shorts_pipeline/
+├── script_generator.py     # Script drafting and topic selection
+├── voice_generator.py      # Edge-TTS voice synthesis
+├── image_generator.py      # Visual prompt rendering & asset fetching
+├── video_editor.py         # MoviePy / FFmpeg video assembly & subtitle burning
+├── uploader_youtube.py     # YouTube Data API v3 publisher
+├── uploader_meta.py        # Meta Graph API publisher
+├── run_pipeline.py         # Main CLI coordinator
+├── requirements.txt        # Python package dependencies
+└── .env.example            # Environment variables template
+```
+
+---
+
+## Setup & Usage
+
+### 1. Installation
+Requires Python 3.10+ and FFmpeg.
+
+```bash
+pip install -r requirements.txt
+cp .env.example .env
+```
+
+### 2. Generate a Preview Video
+To generate a test video locally without uploading:
+```bash
 python run_pipeline.py --mode generate
 ```
-Yeh command bina kisi API key ke turant ek video generate karke `output/` folder me save karegi jise aap dekh sakte hain!
+Output video files are saved to the `output/` directory.
 
----
+### 3. Publishing Configuration
 
-### 2. Auto-Upload Setup (Access Setup)
-
-#### A. YouTube Shorts Auto-Upload (Google Cloud Setup):
-1. [Google Cloud Console](https://console.cloud.google.com/) par jayein.
-2. New Project create karein aur **YouTube Data API v3** enable karein.
-3. **APIs & Services > Credentials** me jayein:
-   - Create Credentials > **OAuth Client ID**.
-   - Application Type: **Desktop App**.
-4. Download JSON button par click karein aur file ko rename karke `client_secret.json` naam se is project folder me rakh dein:
-   `C:\Users\SHIVA TIWARI\.gemini\antigravity\scratch\viral_ai_shorts_pipeline\client_secret.json`
-5. Ab jab aap pehli baar upload karenge:
-   ```powershell
+#### YouTube Shorts:
+1. Enable **YouTube Data API v3** in the Google Cloud Console.
+2. Create an **OAuth 2.0 Client ID (Desktop App)**.
+3. Download the JSON credential file and save it as `client_secret.json` in the project root.
+4. Run the upload command:
+   ```bash
    python run_pipeline.py --mode upload --platform youtube
    ```
-   Browser me Google login window khulegi. Ek baar allow karne ke baad `token_youtube.json` ban jayega aur future me 100% automatically background me upload hoga!
+
+#### Meta (Instagram / Facebook):
+Populate the following variables in your `.env`:
+```env
+INSTAGRAM_ACCOUNT_ID=your_instagram_account_id
+INSTAGRAM_ACCESS_TOKEN=your_user_access_token
+FACEBOOK_PAGE_ID=your_facebook_page_id
+FACEBOOK_PAGE_ACCESS_TOKEN=your_page_access_token
+```
 
 ---
 
-#### B. Instagram Reels & Facebook Setup (Meta Developer):
-1. [Meta for Developers](https://developers.facebook.com/) par app create karein.
-2. Instagram Graph API aur Facebook Pages access token generate karein.
-3. `.env` file me apni details daalein:
-   ```env
-   INSTAGRAM_ACCOUNT_ID=your_id
-   INSTAGRAM_ACCESS_TOKEN=your_token
-   FACEBOOK_PAGE_ID=your_page_id
-   FACEBOOK_PAGE_ACCESS_TOKEN=your_token
-   ```
+## Disclaimer
 
----
-
-## ⏱️ Daily Automation / Scheduling (Windows Task Scheduler)
-Roz automatically video banakar upload karne ke liye:
-1. Windows search me **Task Scheduler** open karein.
-2. **Create Basic Task** par click karein -> Name: "Daily AI Shorts".
-3. Trigger: **Daily** (e.g. 5:00 PM).
-4. Action: **Start a program**:
-   - Program: `python`
-   - Arguments: `run_pipeline.py --mode upload --platform youtube`
-   - Start in: `C:\Users\SHIVA TIWARI\.gemini\antigravity\scratch\viral_ai_shorts_pipeline`
+Ensure all generated and uploaded content complies with YouTube Community Guidelines and Instagram Community Guidelines.

@@ -33,10 +33,17 @@ def get_authenticated_service():
             print(f"[YouTube Auth] Existing token invalid ({e}), requesting new token.")
 
     if not creds or not creds.valid:
+        refreshed = False
         if creds and creds.expired and creds.refresh_token:
             print("[YouTube Auth] Refreshing expired token...")
-            creds.refresh(Request())
-        else:
+            try:
+                creds.refresh(Request())
+                refreshed = True
+            except Exception as e:
+                print(f"[YouTube Auth] Refresh token revoked or expired ({e}). Requesting fresh login.")
+                creds = None
+
+        if not refreshed or not creds or not creds.valid:
             if not secrets_path.exists():
                 raise FileNotFoundError(
                     f"\n[YouTube Auth Error] '{secrets_path.name}' not found!\n"
